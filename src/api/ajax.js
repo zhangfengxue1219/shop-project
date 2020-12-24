@@ -13,6 +13,7 @@ import 'nprogress/nprogress.css'
 //service是一个能发任意Ajax请求的函数，当然可以作为对象使用
 const service = axios.create({
     baseURL:'http://39.99.186.36/api',//基础路径
+    /* baseURL:'/api', */
     timeout:20000//超时时间
 })
 //3.设置请求拦截器
