@@ -1,12 +1,14 @@
 import Vue from 'vue'
-import App from '@/App'
-import router from './router'
+import router from '@/router/index'
+import store from './store'
+import App from './App.vue'
 import TypeNav from '@/components/TypeNav'
-Vue.config.productionTip = false
-//全局注册组件
+import './plugins/swiper'
 Vue.component(TypeNav.name,TypeNav)
+Vue.config.productionTip = false
 new Vue({
-  router,
-  render: h => h(App),
-}).$mount('#app')
-
+    el:'#app',
+    router,
+    store,
+    render:h=>h(App)
+})
