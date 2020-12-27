@@ -7,46 +7,11 @@
       </div>
       <div class="bd">
         <ul class="favourate">
-          <li>
-            <img src="./images/home/like_02.png" alt="" />
+          <li v-for="(item) in like" :key="item.id">
+            <img :src="item.img" alt="" />
             <div class="like-text">
-              <p>阳光美包新款单肩包女包时尚子母包四件套女</p>
-              <h3>¥116.00</h3>
-            </div>
-          </li>
-          <li>
-            <img src="./images/home/like_03.png" alt="" />
-            <div class="like-text">
-              <p>阳光美包新款单肩包女包时尚子母包四件套女</p>
-              <h3>¥116.00</h3>
-            </div>
-          </li>
-          <li>
-            <img src="./images/home/like_01.png" alt="" />
-            <div class="like-text">
-              <p>阳光美包新款单肩包女包时尚子母包四件套女</p>
-              <h3>¥116.00</h3>
-            </div>
-          </li>
-          <li>
-            <img src="./images/home/like_02.png" alt="" />
-            <div class="like-text">
-              <p>阳光美包新款单肩包女包时尚子母包四件套女</p>
-              <h3>¥116.00</h3>
-            </div>
-          </li>
-          <li>
-            <img src="./images/home/like_03.png" alt="" />
-            <div class="like-text">
-              <p>阳光美包新款单肩包女包时尚子母包四件套女</p>
-              <h3>¥116.00</h3>
-            </div>
-          </li>
-          <li>
-            <img src="./images/home/like_01.png" alt="" />
-            <div class="like-text">
-              <p>阳光美包新款单肩包女包时尚子母包四件套女</p>
-              <h3>¥116.00</h3>
+              <p>{{item.text}}</p>
+              <h3>{{item.price}}</h3>
             </div>
           </li>
         </ul>
@@ -56,8 +21,12 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
   name: "Like",
+  computed:{
+    ...mapState({like:state=>state.home.like})
+  }
 };
 </script>
 

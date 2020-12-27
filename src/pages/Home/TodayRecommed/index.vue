@@ -8,26 +8,22 @@
               <h3>今日推荐</h3>
             </div>
           </li>
-          <li class="banner">
-            <img src="./images/home/today01.png" />
+          <li class="banner" v-for="(recommend) in recommends" :key="recommend.id">
+            <img :src="recommend.imageUrl" />
           </li>
-          <li class="banner">
-            <img src="./images/home/today02.png" />
-          </li>
-          <li class="banner">
-            <img src="./images/home/today03.png" />
-          </li>
-          <li class="banner">
-            <img src="./images/home/today04.png" />
-          </li>
+        
         </ul>
       </div>
     </div>
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
   name: "TodayRecommed",
+  computed:{
+    ...mapState({recommends:state=>state.home.recommends})
+  }
 };
 </script>
 

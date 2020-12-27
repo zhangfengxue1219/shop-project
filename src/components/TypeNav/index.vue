@@ -1,20 +1,12 @@
 <template>
   <div class="type-nav">
     <div class="container">
-      <h2 class="all">全部商品分类</h2>
-      <nav class="nav">
-        <a href="###">服装城</a>
-        <a href="###">美妆馆</a>
-        <a href="###">尚品汇超市</a>
-        <a href="###">全球购</a>
-        <a href="###">闪购</a>
-        <a href="###">团购</a>
-        <a href="###">有趣</a>
-        <a href="###">秒杀</a>
-      </nav>
-      <div class="sort">
-        <div class="all-sort-list2" @click="toSearch">
-          <div class="item" v-for="C1 in categoryList" :key="C1.categoryId">
+      <div @mouseleave="hiddenShow" @mouseenter="ShowFirst">
+        <h2 class="all">全部商品分类</h2>
+        <transition name="splice">
+          <div class="sort" v-show="isShowFirst">
+              <div class="all-sort-list2" @click="toSearch" >
+          <div class="item" v-for="(C1,index) in categoryList" :key="C1.categoryId" :class="{active:currentIndex===index}" @mouseenter="showSubList(index)">
             <h3>
               <a href="javascript:;" :data-categoryName="C1.categoryName" :data-category1Id="C1.categoryId">{{C1.categoryName}}</a>
                <!-- <a href="javascript:;">{{ C1.categoryName}}</a> -->
@@ -51,19 +43,62 @@
           </div>
         </div>
       </div>
+        </transition>
+      </div>
+      <nav class="nav">
+        <a href="###">服装城</a>
+        <a href="###">美妆馆</a>
+        <a href="###">尚品汇超市</a>
+        <a href="###">全球购</a>
+        <a href="###">闪购</a>
+        <a href="###">团购</a>
+        <a href="###">有趣</a>
+        <a href="###">秒杀</a>
+      </nav>
+     
     </div>
   </div>
 </template>
 
 <script>
+import throttle from 'lodash/throttle'
 export default {
   name: "TypeNav",
+  data(){
+   
+    return {
+      isShowFirst : false,
+      currentIndex : -2
+    }
+  },
+  created(){
+    if(this.$route.path === '/'){
+      this.isShowFirst = true
+    }
+  },
   computed: {
     categoryList() {
       return this.$store.state.home.categoryList;
     },
   },
   methods: {
+     hiddenShow(){
+      this.currentIndex = -2
+      if(this.$route.path !== '/'){
+        this.isShowFirst = false
+      } 
+    },
+    
+    ShowFirst(){
+      this.currentIndex = -1
+      this.isShowFirst=true
+    },
+   
+    showSubList: throttle(function(index){
+      if(this.currentIndex !== -2){
+        this.currentIndex = index
+      }
+    },500),
     toSearch(event) {
       const {
         categoryname,
@@ -73,7 +108,7 @@ export default {
       } = event.target.dataset
       if (categoryname) {
         const query = {
-          categoryName: categoryname
+          categoryName: categoryname,
         }
         if (category1id) {
           query.category1Id = category1id
@@ -82,10 +117,19 @@ export default {
         } else if (category3id) {
           query.category3Id = category3id
         }
-        this.$router.push({
+
+        const location = {
           name: 'search',
-          query
-        })
+          query,
+          params:this.$route.params
+        }
+        if(this.$route.name === 'search'){
+          this.$router.replace(location)
+        }else{
+        this.$router.push(location)
+        }
+        this.hiddenShow()
+
       }
     }
   },
@@ -132,7 +176,13 @@ export default {
       position: absolute;
       background: #fafafa;
       z-index: 999;
-
+      &.splice-enter, &.splice-leave-to{
+        opacity: 0;
+        height: 0;
+      }
+      &.splice-enter-active, &.splice-leave-active{
+        transition: all .3s;
+      }
       .all-sort-list2 {
         .item {
           h3 {
@@ -202,7 +252,8 @@ export default {
             }
           }
 
-          &:hover {
+          &.active {
+            background:#ccc;
             .item-list {
               display: block;
             }

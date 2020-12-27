@@ -58,19 +58,31 @@ export default {
       /* this.$router.push(`/search/${this.keyword}`) */
       /* this.$router.push(`/search/${this.keyword}?keyword=${this.keyword.toUpperCase()}`) */
       const location = {
-          name:'search'
+          name:'search',
+          query:this.$route.query
       }
       if(this.keyword){
           location.params={
               //路由必须设置name
               keyword:this.keyword
-          },
-          location.query = {
-              keyword2:this.keyword.toUpperCase()
           }
       }
-      this.$router.push(location)
+      if(this.$route.name === 'search'){
+          this.$router.replace(location)
+      }else{
+          this.$router.push(location)
+      }
+      
     }
+  },
+  mounted(){
+      this.$bus.$on('removeKeyword',()=>{
+          this.keyword = ''
+      })
+  },
+  beforeDestroy(){
+      this.$bus.off()
+
   }
 }
 </script>
