@@ -2,6 +2,7 @@
     包含所有接口请求函数的模块
 */
 import ajax from './ajax'
+import mockAjax from './mockAjax'
 //获取商品的三级分类类别
 export function reqCategoryList(){
   return  ajax({
@@ -15,3 +16,5 @@ export function reqBannerList(){
    /*  method:'get' */
   })
 }
+export const reqFloors = ()=>mockAjax('/floors')
+export const reqSearch  = (searchParams) => ajax.post('/list', searchParams) 

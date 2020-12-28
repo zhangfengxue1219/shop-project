@@ -9,6 +9,7 @@
 <script>
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+
 export default {
   name: 'App',
   components:{
@@ -18,7 +19,8 @@ export default {
   mounted(){
     this.$store.dispatch('getCategoryList')
     this.$store.dispatch('getBannerList')
-  }
+  },
+ 
 }
 </script>
 
