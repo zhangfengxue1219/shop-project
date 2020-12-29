@@ -26,23 +26,46 @@
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                 <li :class="{active: orderArr[0]==='1'}" @click="setOrder('1')">
+                  <a href="javascript:">
+                    综合
+                    <i class="iconfont" 
+                      :class="orderArr[1]==='desc' ? 'icondown' : 'iconup'"
+                      v-if="orderArr[0]==='1'"></i>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
+                <li :class="{active : orderArr[0] === '3'}" @click="setOrder('3')">
+                  <a href="javascript:;">
+                    销量
+                    <i class = 'iconfont' 
+                    :class="orderArr[1] === 'desc' ? 'icondown' : 'iconup'"
+                    v-if="orderArr[0] === '3'"></i>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">新品</a>
+                <li :class="{active : orderArr[0] === '4'}" @click="setOrder('4')">
+                  <a href="javascript:;">
+                    新品
+                    <i class = 'iconfont' 
+                    :class="orderArr[1] === 'desc' ? 'icondown' : 'iconup'"
+                    v-if="orderArr[0] === '4'"></i>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">评价</a>
+                <li :class="{active : orderArr[0] === '5'}" @click="setOrder('5')">
+                  <a href="javascript:;">
+                    评价
+                    <i class = 'iconfont' 
+                    :class="orderArr[1] === 'desc' ? 'icondown' : 'iconup'"
+                    v-if="orderArr[0] === '5'"></i>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+               
+                <li :class="{active : orderArr[0] === '2'}" @click="setOrder('2')">
+                  <a href="javascript:;">
+                    价格
+                    <i class = 'iconfont' 
+                    :class="orderArr[1] === 'desc' ? 'icondown' : 'iconup'"
+                    v-if="orderArr[0] === '2'"></i>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -76,35 +99,13 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <Pagination
+            :currentPage ="options.pageNo"
+            :pageSize = "options.pageSize"
+            :total = 'total'
+            :showPageNo = '5'
+            @currentChange = 'currentChange'
+          />
         </div>
       </div>
     </div>
@@ -124,16 +125,19 @@
           category3Id:'',
           categoryName:'',
           keyword:'',
-          order:'',
+          order:'2:asc',
           pageNo:1,
-          pageSize:10,
+          pageSize:4,
           props:[],
-          trademark:''
+         // trademark:''
         }
       }
     },
     computed:{
-      ...mapGetters(['goodsList'])
+      ...mapGetters(['goodsList','total']),
+      orderArr(){
+        return this.options.order.split(':')
+      }
     },
     components: {
       SearchSelector
@@ -198,11 +202,16 @@
       setTrademark(trademark){
         //如果当前品牌已经存在，直接结束
         if(trademark === this.options.trademark) return
-        //更新options当中的数据，发送请求
-        this.options.trademark = trademark
+        
+        // 更新options中的trademark为指定的值
+        // 向响应式对象中添加一个 property，并确保这个新 property
+        this.$set(this.options,'trademark',trademark)
+        //this.options.trademark = trademark
+          this.getShopList()
       },
       removeTrademark(){
-        this.options.trademark=''
+        //this.options.trademark=''
+        this.$delete(this.options,'trademark')
         this.getShopList()
       },
       addProps(prop){
@@ -213,6 +222,26 @@
       },
       removeProp(index){
         this.options.props.splice(index,1)
+        this.getShopList()
+      },
+      setOrder (orderFlag) {
+        // 得到当前的排序项和排序方式
+        let [flag, type] = this.orderArr
+        //   点击的是当前排序项: 只需要切换orderType
+        if (orderFlag===flag) {
+          type = type==='desc' ? 'asc' : 'desc'
+        } else {
+          //   点击的不是当前排序项:  更新orderFlag为指定的值, orderType更新为desc
+          flag = orderFlag
+          type = 'desc'
+        }
+        // 请求获取商品分页列表
+        this.options.order = flag + ':' + type
+        this.getShopList()
+      },
+      /* 更新页码数 */
+      currentChange(page){
+        this.options.pageNo = page
         this.getShopList()
       }
     }
